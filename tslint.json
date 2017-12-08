@@ -1,0 +1,22 @@
+{
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint:recommended"
+    ],
+    "jsRules": {},
+    "rules": {
+        "quotemark": [
+            true,
+            "single"
+        ],
+        "trailing-comma": false,
+        "arrow-parens": [
+            true,
+            "ban-single-arg-parens"
+        ],
+        "object-literal-key-quotes": [true, "consistent"],
+        "align": false,
+        "interface-name": [true, "never-prefix"]
+    },
+    "rulesDirectory": []
+}

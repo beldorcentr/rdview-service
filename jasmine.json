@@ -1,0 +1,7 @@
+{
+  "spec_dir": "compiled",
+  "spec_files": [
+    "**/*[sS]pec.js"
+  ],
+  "stopSpecOnExpectationFailure": false
+}
