@@ -1,3 +1,4 @@
+import axios, { AxiosPromise } from 'axios';
 import { CurrentPosition, Passage, Photo, Road, Segment } from './interfaces';
 import { PassageService } from './passage-service';
 import { REQUEST_PASSAGE_DIRECTION, RoadSegmentService } from './road-segment-service';
@@ -9,6 +10,8 @@ import {
 import { sortPassagesByDistanceToCoordinates } from './utils/sorting';
 
 export class RdviewService {
+  private authorization: string;
+  private apiUrl: string;
 
   private passageService: PassageService;
 
@@ -20,6 +23,8 @@ export class RdviewService {
 
   private rangeDiffInKmForClosePassagesInFindingClosest = .1;
   private rangeDiffInCoordinatesForClosePassagesInFindingClosest = .005;
+
+  private rangeInKmForClosestPassages = 2;
 
   private currentPhoto: Photo;
   private currentPassage: Passage;
@@ -33,7 +38,9 @@ export class RdviewService {
   }
 
   constructor(settings: { apiUrl?: string, authorization: string
-      } = { apiUrl: 'https://i.centr.by/rdview', authorization: '' }) {
+      } = { apiUrl: 'https://i.centr.by/rdview/api', authorization: '' }) {
+    this.authorization = settings.authorization;
+    this.apiUrl = settings.apiUrl;
     this.passageService = new PassageService({
       apiUrl: settings.apiUrl,
       authorization: settings.authorization
@@ -111,9 +118,11 @@ export class RdviewService {
       .filter(passage => passage.photos.some(photo =>
         photo.km > this.currentPhoto.km));
 
+    // this.currentPhoto.km < photo.km && photo.km < this.currentPhoto.km - this.rangeDiffInKmForSamePassage
+
     if (passagesAfterCurrentPhoto.length) {
-      return this.setPassage(sortPassagesByDistanceToKm(
-        passagesAfterCurrentPhoto, this.currentPhoto.km)[0].id);
+      return this.setPassage(sortPassagesByDateDesc(
+        passagesAfterCurrentPhoto)[0].id);
     }
 
     // no more photo and no passages to switch
@@ -143,8 +152,8 @@ export class RdviewService {
         photo.km < this.currentPhoto.km));
 
     if (passagesBeforeCurrentPhoto.length) {
-      return this.setPassage(sortPassagesByDistanceToKm(
-        passagesBeforeCurrentPhoto, this.currentPhoto.km)[0].id);
+      return this.setPassage(sortPassagesByDateDesc(
+        passagesBeforeCurrentPhoto)[0].id);
     }
 
     // no more photo and no passages to switch
@@ -224,9 +233,26 @@ export class RdviewService {
 
   private generateCurrentPosition(isPassageChanged: boolean = false,
       isNoNewPhoto: boolean = false, isEmptyResult: boolean = false): CurrentPosition {
+    const closeToCurrentPassages = filterPassagesByDistanceToKm(this.segment.passages,
+      this.currentPhoto.km, this.rangeInKmForClosestPassages);
+    const closeToCurrentKmBegin = Math.max(this.segment.kmBegin,
+      Math.max(0, this.currentPhoto.km - this.rangeInKmForClosestPassages));
+    const closeToCurrentKmEnd = Math.min(this.segment.kmEnd,
+      this.currentPhoto.km + this.rangeInKmForClosestPassages);
+    closeToCurrentPassages.forEach(passage => {
+      passage.kmBegin = Math.max(passage.kmBegin, closeToCurrentKmBegin);
+      passage.kmEnd = Math.min(passage.kmEnd, closeToCurrentKmEnd);
+      passage.photos = passage.photos
+        .filter(photo => passage.kmBegin < photo.km && photo.km < passage.kmEnd);
+      return passage;
+    });
+
     return Object.assign({
       currentPassage: this.currentPassage,
       currentPhoto: this.currentPhoto,
+      closeToCurrentKmBegin,
+      closeToCurrentKmEnd,
+      closeToCurrentPassages,
 
       isPassageChanged,
       isNoNewPhoto,

@@ -19,7 +19,7 @@ export class RoadSegmentService {
     this.segmentUrl = `${settings.apiUrl}/v1/segment`;
     this.axios = axios.create({
       headers: {
-        'Authorization': `${settings.authorization}`
+        'Authorization': settings.authorization
       }
     });
   }

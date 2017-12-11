@@ -23,7 +23,7 @@ import { RdviewService, Passage, Photo, Road, Segment, CurrentPosition } from 'r
 
 
 const rdviewService = new RdviewService({
-  // default: apiUrl: 'https://i.centr.by/rdview',
+  // default: apiUrl: 'https://i.centr.by/rdview/api',
   authorization: 'Bearer YOUR_OAUTH_TOKEN'
 });
 
