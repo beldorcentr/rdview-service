@@ -141,9 +141,9 @@ export class RdviewService {
     }
 
     // case when loading segment
-    if (this.passageService.loadingNextSegment) {
-      return this.passageService.loadingNextSegment
-      .then(() => this.getPreviousPhoto());
+    if (this.passageService.loadingPreviousSegment) {
+      return this.passageService.loadingPreviousSegment
+        .then(() => this.getPreviousPhoto());
     }
 
     // end of current passage
