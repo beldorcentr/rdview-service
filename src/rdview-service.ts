@@ -48,6 +48,7 @@ export class RdviewService {
   }
 
   public initByRoad(roadId: number, km: number): Promise<CurrentPosition> {
+    this.clearSettings();
     return this.passageService.initByRoad(roadId, km)
       .then(segment => {
         this.isInited = true;
@@ -71,6 +72,7 @@ export class RdviewService {
   }
 
   public initByCoordinates(lat: number, lon: number): Promise<CurrentPosition> {
+    this.clearSettings();
     return this.passageService.initByCoordinates(lat, lon)
       .then(segment => {
         this.isInited = true;
@@ -211,6 +213,16 @@ export class RdviewService {
     if (!this.isInited) {
       throw new Error('RdviewService has not been initialized with road or coordinates before use');
     }
+  }
+
+  private clearSettings() {
+    this.currentPhoto = null;
+    this.currentPassage = null;
+    this.isInited = false;
+    this.passageService.loadingPreviousSegment = null;
+    this.passageService.loadingNextSegment = null;
+    this.passageService.isNextSegmentEmpty = false;
+    this.passageService.isPreviousSegmentEmpty = false;
   }
 
   private loadNeighbourSegmentsIfNeeded() {
