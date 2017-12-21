@@ -9,6 +9,11 @@ import {
 } from './utils';
 import { sortPassagesByDistanceToCoordinates } from './utils/sorting';
 
+export interface RdviewServiceConfig {
+  apiUrl?: string;
+  authorization: string;
+}
+
 export class RdviewService {
   private authorization: string;
   private apiUrl: string;
@@ -37,8 +42,8 @@ export class RdviewService {
     return this.currentPassage.photos.indexOf(this.currentPhoto);
   }
 
-  constructor(settings: { apiUrl?: string, authorization: string
-      } = { apiUrl: 'https://i.centr.by/rdview/api', authorization: '' }) {
+  constructor(settings: RdviewServiceConfig = {
+      apiUrl: 'https://i.centr.by/rdview/api', authorization: '' }) {
     this.authorization = settings.authorization;
     this.apiUrl = settings.apiUrl;
     this.passageService = new PassageService({
@@ -51,11 +56,11 @@ export class RdviewService {
     this.clearSettings();
     return this.passageService.initByRoad(roadId, km)
       .then(segment => {
-        this.isInited = true;
-
         if (!segment) {
-          return null;
+          return this.generateCurrentPosition(false, false, true);
         }
+
+        this.isInited = true;
 
         const closePassagesToKm = filterPassagesByDistanceToKm(segment.passages,
           km, this.rangeDiffInKmForClosePassagesInFindingClosest);
@@ -75,11 +80,11 @@ export class RdviewService {
     this.clearSettings();
     return this.passageService.initByCoordinates(lat, lon)
       .then(segment => {
-        this.isInited = true;
-
         if (!segment) {
           return this.generateCurrentPosition(false, false, true);
         }
+
+        this.isInited = true;
 
         const closePassagesToCoordinates = filterPassagesByDistanceToCoordinates(
           segment.passages, lat, lon,
@@ -119,8 +124,6 @@ export class RdviewService {
     const passagesAfterCurrentPhoto = this.segment.passages
       .filter(passage => passage.photos.some(photo =>
         photo.km > this.currentPhoto.km));
-
-    // this.currentPhoto.km < photo.km && photo.km < this.currentPhoto.km - this.rangeDiffInKmForSamePassage
 
     if (passagesAfterCurrentPhoto.length) {
       return this.setPassage(sortPassagesByDateDesc(
@@ -230,13 +233,13 @@ export class RdviewService {
       return;
     }
 
-    if (this.segment.kmEnd - this.currentPhoto.km <
+    if (this.segment.endKm - this.currentPhoto.km <
         this.distanceToBorderInKmToStartLoadingNewSegment &&
         !this.passageService.isNextSegmentEmpty) {
       this.passageService.loadNextSegment();
     }
 
-    if (this.currentPhoto.km - this.segment.kmBegin <
+    if (this.currentPhoto.km - this.segment.beginKm <
         this.distanceToBorderInKmToStartLoadingNewSegment &&
         !this.passageService.isPreviousSegmentEmpty) {
       this.passageService.loadPreviousSegment();
@@ -247,23 +250,24 @@ export class RdviewService {
       isNoNewPhoto: boolean = false, isEmptyResult: boolean = false): CurrentPosition {
     const closeToCurrentPassages = filterPassagesByDistanceToKm(this.segment.passages,
       this.currentPhoto.km, this.rangeInKmForClosestPassages);
-    const closeToCurrentKmBegin = Math.max(this.segment.kmBegin,
+    const closeToCurrentBeginKm = Math.max(this.segment.beginKm,
       Math.max(0, this.currentPhoto.km - this.rangeInKmForClosestPassages));
-    const closeToCurrentKmEnd = Math.min(this.segment.kmEnd,
+    const closeToCurrentEndKm = Math.min(this.segment.endKm,
       this.currentPhoto.km + this.rangeInKmForClosestPassages);
+
     closeToCurrentPassages.forEach(passage => {
-      passage.kmBegin = Math.max(passage.kmBegin, closeToCurrentKmBegin);
-      passage.kmEnd = Math.min(passage.kmEnd, closeToCurrentKmEnd);
+      passage.beginKm = Math.max(passage.beginKm, closeToCurrentBeginKm);
+      passage.endKm = Math.min(passage.endKm, closeToCurrentEndKm);
       passage.photos = passage.photos
-        .filter(photo => passage.kmBegin < photo.km && photo.km < passage.kmEnd);
+        .filter(photo => passage.beginKm < photo.km && photo.km < passage.endKm);
       return passage;
     });
 
     return Object.assign({
       currentPassage: this.currentPassage,
       currentPhoto: this.currentPhoto,
-      closeToCurrentKmBegin,
-      closeToCurrentKmEnd,
+      closeToCurrentBeginKm,
+      closeToCurrentEndKm,
       closeToCurrentPassages,
 
       isPassageChanged,

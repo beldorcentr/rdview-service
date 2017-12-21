@@ -32,8 +32,7 @@ export class RoadSegmentService {
         km,
         direction
       }
-    })
-    .then(response => this.formatSegment(response.data));
+    }).then(response => this.formatSegment(response.data));
   }
 
   public getSegmentByCoordinates(lat: number, lon: number): Promise<Segment> {
@@ -42,8 +41,7 @@ export class RoadSegmentService {
         lat,
         lon
       }
-    })
-    .then(response => this.formatSegment(response.data));
+    }).then(response => this.formatSegment(response.data));
   }
 
   private formatSegment(roadInfo: Segment): Segment {
@@ -61,7 +59,7 @@ export class RoadSegmentService {
 
       passage.photos = passage.photos.map(photo => {
         photo.date = new Date(photo.date);
-        photo.imgUrl = `${this.apiUrl}/v1/photo?id=${photo.id}`;
+        // photo.imgUrl = `${this.apiUrl}/v1/photo?id=${photo.id}`;
         return photo;
       });
 

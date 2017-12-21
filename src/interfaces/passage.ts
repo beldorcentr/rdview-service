@@ -3,8 +3,8 @@ import { Photo } from './photo';
 export interface Passage {
   id: string;
   date: Date;
-  direction: number;
+  direction: 'forward' | 'backward';
   photos: Photo[];
-  kmBegin?: number;
-  kmEnd?: number;
+  beginKm: number;
+  endKm: number;
 }

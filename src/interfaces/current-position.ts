@@ -6,8 +6,8 @@ export interface CurrentPosition extends Segment  {
   currentPassage: Passage;
   currentPhoto: Photo;
 
-  closeToCurrentKmBegin: number;
-  closeToCurrentKmEnd: number;
+  closeToCurrentBeginKm: number;
+  closeToCurrentEndKm: number;
   closeToCurrentPassages: Passage[];
 
   isPassageChanged: boolean;

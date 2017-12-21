@@ -47,7 +47,7 @@ export class PassageService {
       return;
     }
     this.loadingNextSegment = this.roadSegmentService
-      .getSegmentByRoad(this.segment.roadId, this.segment.kmEnd,
+      .getSegmentByRoad(this.segment.road.id, this.segment.endKm,
         REQUEST_PASSAGE_DIRECTION.FORWARD)
       .then(segment => {
         // TODO: clear previous from X km back
@@ -65,7 +65,7 @@ export class PassageService {
       return;
     }
     this.loadingPreviousSegment = this.roadSegmentService
-      .getSegmentByRoad(this.segment.roadId, this.segment.kmBegin,
+      .getSegmentByRoad(this.segment.road.id, this.segment.beginKm,
         REQUEST_PASSAGE_DIRECTION.BACKWARD)
       .then(segment => {
         this.loadingPreviousSegment = null;
@@ -83,7 +83,6 @@ export class PassageService {
     }
     this.segment = segment;
     this.segment.passages = sortPassagesByDateDesc(this.segment.passages);
-    this.segment.passages = this.getPassagesWithBorders(this.segment.passages);
     return segment;
   }
 
@@ -97,11 +96,6 @@ export class PassageService {
     if (!segment) {
       return;
     }
-
-    this.segment.kmBegin = Math.min(this.segment.kmBegin,
-      segment.kmBegin);
-    this.segment.kmEnd = Math.max(this.segment.kmEnd,
-      segment.kmEnd);
 
     segment.passages.forEach(newPassage => {
       const existingNeighbourPassage = this.segment.passages
@@ -128,7 +122,6 @@ export class PassageService {
     });
 
     this.segment.passages = sortPassagesByDateDesc(this.segment.passages);
-    this.segment.passages = this.getPassagesWithBorders(this.segment.passages);
   }
 
   private isPassagesNeighboursByKm(passage1: Passage, passage2: Passage, maxKmDiff: number): boolean {
@@ -165,13 +158,5 @@ export class PassageService {
       isValueBetween(maxValueInArray1, minValueInArray2, maxValueInArray2, precision) ||
       isValueBetween(minValueInArray2, minValueInArray1, maxValueInArray1, precision) ||
       isValueBetween(maxValueInArray2, minValueInArray1, maxValueInArray1, precision);
-  }
-
-  private getPassagesWithBorders(passages: Passage[]): Passage[] {
-    return passages.map(passage => {
-      passage.kmBegin = Math.min.apply(null, passage.photos.map(photo => photo.km));
-      passage.kmEnd = Math.max.apply(null, passage.photos.map(photo => photo.km));
-      return passage;
-    });
   }
 }

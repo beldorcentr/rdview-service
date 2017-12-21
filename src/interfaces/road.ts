@@ -1,5 +1,6 @@
 export interface Road {
-  roadId: number;
-  roadShortName: string;
-  roadName: string;
+  id: number;
+  name: string;
+  code: string;
+  title: string;
 }
