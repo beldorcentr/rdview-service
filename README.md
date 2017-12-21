@@ -39,10 +39,11 @@ rdviewService.setPassage(passageId)
   .then(currentPosition => handleNewPosition(currentPosition));
 
 function handleNewPosition(position) {
-  // position.roadName
+  // position.road.name
   // position.currentPhoto.km
   // position.currentPhoto.lat
   // position.currentPhoto.lon
   // position.currentPhoto.imgUrl
+  // position.passages[0].id
 }
 ```

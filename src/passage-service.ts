@@ -50,7 +50,6 @@ export class PassageService {
       .getSegmentByRoad(this.segment.road.id, this.segment.endKm,
         REQUEST_PASSAGE_DIRECTION.FORWARD)
       .then(segment => {
-        // TODO: clear previous from X km back
         this.loadingNextSegment = null;
         if (this.isSegmentWithPassages(segment)) {
           this.includeSegment(segment);
@@ -83,6 +82,7 @@ export class PassageService {
     }
     this.segment = segment;
     this.segment.passages = sortPassagesByDateDesc(this.segment.passages);
+    this.segment.passages = this.getPassagesWithUpdatedKmBorders(this.segment.passages);
     return segment;
   }
 
@@ -96,6 +96,11 @@ export class PassageService {
     if (!segment) {
       return;
     }
+
+    this.segment.beginKm = Math.min(this.segment.beginKm,
+      segment.beginKm);
+    this.segment.endKm = Math.max(this.segment.endKm,
+      segment.endKm);
 
     segment.passages.forEach(newPassage => {
       const existingNeighbourPassage = this.segment.passages
@@ -122,6 +127,7 @@ export class PassageService {
     });
 
     this.segment.passages = sortPassagesByDateDesc(this.segment.passages);
+    this.segment.passages = this.getPassagesWithUpdatedKmBorders(this.segment.passages);
   }
 
   private isPassagesNeighboursByKm(passage1: Passage, passage2: Passage, maxKmDiff: number): boolean {
@@ -158,5 +164,13 @@ export class PassageService {
       isValueBetween(maxValueInArray1, minValueInArray2, maxValueInArray2, precision) ||
       isValueBetween(minValueInArray2, minValueInArray1, maxValueInArray1, precision) ||
       isValueBetween(maxValueInArray2, minValueInArray1, maxValueInArray1, precision);
+  }
+
+  private getPassagesWithUpdatedKmBorders(passages: Passage[]): Passage[] {
+    return passages.map(passage => {
+      passage.beginKm = Math.min.apply(null, passage.photos.map(photo => photo.km));
+      passage.endKm = Math.max.apply(null, passage.photos.map(photo => photo.km));
+      return passage;
+    });
   }
 }

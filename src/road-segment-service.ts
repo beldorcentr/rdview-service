@@ -16,7 +16,7 @@ export class RoadSegmentService {
 
   constructor(settings: { apiUrl: string, authorization: string }) {
     this.apiUrl = settings.apiUrl;
-    this.segmentUrl = `${settings.apiUrl}/v1/segment`;
+    this.segmentUrl = `${settings.apiUrl}/v1/segments`;
     this.axios = axios.create({
       headers: {
         'Authorization': settings.authorization
@@ -59,7 +59,6 @@ export class RoadSegmentService {
 
       passage.photos = passage.photos.map(photo => {
         photo.date = new Date(photo.date);
-        // photo.imgUrl = `${this.apiUrl}/v1/photo?id=${photo.id}`;
         return photo;
       });
 

@@ -11,7 +11,7 @@ import { sortPassagesByDistanceToCoordinates } from './utils/sorting';
 
 export interface RdviewServiceConfig {
   apiUrl?: string;
-  authorization: string;
+  authorization?: string;
 }
 
 export class RdviewService {
@@ -42,13 +42,15 @@ export class RdviewService {
     return this.currentPassage.photos.indexOf(this.currentPhoto);
   }
 
-  constructor(settings: RdviewServiceConfig = {
-      apiUrl: 'https://i.centr.by/rdview/api', authorization: '' }) {
-    this.authorization = settings.authorization;
-    this.apiUrl = settings.apiUrl;
+  constructor({ apiUrl = 'https://i.centr.by/rdview/api',
+      authorization = ''
+    }: RdviewServiceConfig = { }) {
+
+    this.authorization = authorization;
+    this.apiUrl = apiUrl;
     this.passageService = new PassageService({
-      apiUrl: settings.apiUrl,
-      authorization: settings.authorization
+      apiUrl,
+      authorization
     });
   }
 
@@ -65,11 +67,9 @@ export class RdviewService {
         const closePassagesToKm = filterPassagesByDistanceToKm(segment.passages,
           km, this.rangeDiffInKmForClosePassagesInFindingClosest);
 
-        if (closePassagesToKm.length) {
-          this.currentPassage = sortPassagesByDateDesc(closePassagesToKm)[0];
-        } else {
-          this.currentPassage = sortPassagesByDistanceToKm(segment.passages, km)[0];
-        }
+        this.currentPassage = closePassagesToKm.length ?
+          sortPassagesByDateDesc(closePassagesToKm)[0] :
+          sortPassagesByDistanceToKm(segment.passages, km)[0];
 
         this.currentPhoto = getClosestPhotoByKm(this.currentPassage.photos, km);
         return this.generateCurrentPosition(true, false);
@@ -90,13 +90,9 @@ export class RdviewService {
           segment.passages, lat, lon,
           this.rangeDiffInCoordinatesForClosePassagesInFindingClosest);
 
-        if (closePassagesToCoordinates.length) {
-          this.currentPassage = sortPassagesByDateDesc(
-            closePassagesToCoordinates)[0];
-        } else {
-          this.currentPassage = sortPassagesByDistanceToCoordinates(
-            segment.passages, lat, lon)[0];
-        }
+        this.currentPassage = closePassagesToCoordinates.length ?
+          sortPassagesByDateDesc(closePassagesToCoordinates)[0] :
+          sortPassagesByDistanceToCoordinates(segment.passages, lat, lon)[0];
 
         this.currentPhoto = getClosestPhotoByCoords(this.currentPassage.photos, lat, lon);
         return this.generateCurrentPosition(true, false);
