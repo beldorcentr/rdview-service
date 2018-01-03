@@ -6,6 +6,8 @@ Service for [rdview](https://i.centr.by/rdview) to receive photos from roads.
 
 Serivice uses rdview api and provides photos from roads of Belarus. Required [authorization](https://i.centr.by/oauth/)
 
+[Usage example](https://github.com/beldorcentr/rdview-front)
+
 ## Installation
 
 ```
