@@ -1,11 +1,9 @@
-import axios, { AxiosPromise } from 'axios';
-import { CurrentPosition, Passage, Photo, Road, Segment } from './interfaces';
+import { CurrentPosition, Passage, Photo, Segment } from './interfaces';
 import { PassageService } from './passage-service';
-import { REQUEST_PASSAGE_DIRECTION, RoadSegmentService } from './road-segment-service';
 import {
-  distanceBetweenCoords, filterPassagesByDistanceToCoordinates, filterPassagesByDistanceToKm,
+  filterPassagesByDistanceToCoordinates, filterPassagesByDistanceToKm,
   getClosestPhotoByCoords, getClosestPhotoByKm, sortPassagesByDateDesc,
-  sortPassagesByDistanceToKm, sortPhotosByKmAsc
+  sortPassagesByDistanceToKm
 } from './utils';
 import { sortPassagesByDistanceToCoordinates } from './utils/sorting';
 
@@ -15,16 +13,11 @@ export interface RdviewServiceConfig {
 }
 
 export class RdviewService {
-  private authorization: string;
-  private apiUrl: string;
-
   private passageService: PassageService;
 
   private isInited = false;
 
   private distanceToBorderInKmToStartLoadingNewSegment = .5;
-  private dateDiffInMsForSamePassage = 1000 * 30;
-  private rangeDiffInKmForSamePassage = .2;
 
   private rangeDiffInKmForClosePassagesInFindingClosest = .1;
   private rangeDiffInCoordinatesForClosePassagesInFindingClosest = .005;
@@ -46,8 +39,6 @@ export class RdviewService {
       authorization = ''
     }: RdviewServiceConfig = { }) {
 
-    this.authorization = authorization;
-    this.apiUrl = apiUrl;
     this.passageService = new PassageService({
       apiUrl,
       authorization

@@ -1,4 +1,4 @@
-import { Passage, Photo, Road, Segment } from '../interfaces';
+import { Photo } from '../interfaces';
 import { distanceBetweenCoords } from './distance';
 
 export function getClosestPhotoByCoords(photos: Photo[], lat: number, lon: number): Photo {

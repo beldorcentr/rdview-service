@@ -1,4 +1,4 @@
-import { Passage, Photo, Road, Segment } from '../interfaces';
+import { Passage } from '../interfaces';
 import { distanceBetweenCoords } from './distance';
 
 export function filterPassagesByDistanceToCoordinates(passages: Passage[],

@@ -1,22 +1,14 @@
 import axios, { AxiosInstance } from 'axios';
-import { Passage, Photo, Road, Segment } from './interfaces';
+import { Segment } from './interfaces';
 import { uuidv4 } from './utils';
-
-export const REQUEST_PASSAGE_DIRECTION = {
-  FORWARD: 1,
-  BACKWARD: -1,
-  BOTH: 0
-};
 
 export class RoadSegmentService {
 
-  private apiUrl: string;
   private segmentUrl: string;
   private axios: AxiosInstance;
 
   constructor(settings: { apiUrl: string, authorization: string }) {
-    this.apiUrl = settings.apiUrl;
-    this.segmentUrl = `${settings.apiUrl}/v1/segments`;
+    this.segmentUrl = `${settings.apiUrl}/v1.1/segments`;
     this.axios = axios.create({
       headers: {
         'Authorization': settings.authorization
@@ -24,13 +16,12 @@ export class RoadSegmentService {
     });
   }
 
-  public getSegmentByRoad(roadId: number, km: number,
-      direction: number = REQUEST_PASSAGE_DIRECTION.BOTH): Promise<Segment> {
+  public getSegmentByRoad(roadId: number, beginKm: number, endKm: number): Promise<Segment> {
     return this.axios.get(this.segmentUrl, {
       params: {
         roadId,
-        km,
-        direction
+        beginKm,
+        endKm
       }
     }).then(response => this.formatSegment(response.data));
   }

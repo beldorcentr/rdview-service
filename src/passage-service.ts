@@ -1,9 +1,6 @@
-import { Passage, Photo, Segment } from './interfaces';
-import { REQUEST_PASSAGE_DIRECTION, RoadSegmentService } from './road-segment-service';
-import {
-  dateParser, distanceBetweenCoords, getClosestPhotoByCoords,
-  getClosestPhotoByKm, sortPassagesByDateDesc, sortPassagesByDistanceToKm, sortPhotosByKmAsc
-} from './utils';
+import { Passage, Segment } from './interfaces';
+import { RoadSegmentService } from './road-segment-service';
+import { dateParser, sortPassagesByDateDesc, sortPhotosByKmAsc } from './utils';
 
 export class PassageService {
 
@@ -13,9 +10,9 @@ export class PassageService {
   public loadingNextSegment: Promise<void>;
   public isNextSegmentEmpty: boolean;
 
-  private distanceToBorderInKmToStartLoadingNewSegment = .5;
   private dateDiffInMsForSamePassage = 1000 * 30;
   private rangeDiffInKmForSamePassage = .2;
+  private passageInitKmRange = 1;
 
   private roadSegmentService: RoadSegmentService;
 
@@ -29,7 +26,9 @@ export class PassageService {
   }
 
   public initByRoad(roadId: number, km: number): Promise<Segment> {
-    return this.roadSegmentService.getSegmentByRoad(roadId, km)
+    return this.roadSegmentService
+      .getSegmentByRoad(roadId, Math.max(0, km - this.passageInitKmRange),
+        km + this.passageInitKmRange)
       .then(segment => this.initFirstSegment(segment));
   }
 
@@ -48,7 +47,7 @@ export class PassageService {
     }
     this.loadingNextSegment = this.roadSegmentService
       .getSegmentByRoad(this.segment.road.id, this.segment.endKm,
-        REQUEST_PASSAGE_DIRECTION.FORWARD)
+        this.segment.endKm + this.passageInitKmRange)
       .then(segment => {
         this.loadingNextSegment = null;
         if (this.isSegmentWithPassages(segment)) {
@@ -64,8 +63,8 @@ export class PassageService {
       return;
     }
     this.loadingPreviousSegment = this.roadSegmentService
-      .getSegmentByRoad(this.segment.road.id, this.segment.beginKm,
-        REQUEST_PASSAGE_DIRECTION.BACKWARD)
+      .getSegmentByRoad(this.segment.road.id,
+        Math.max(0, this.segment.beginKm - this.passageInitKmRange), this.segment.beginKm)
       .then(segment => {
         this.loadingPreviousSegment = null;
         if (this.isSegmentWithPassages(segment)) {

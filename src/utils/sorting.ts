@@ -1,4 +1,4 @@
-import { Passage, Photo, Road, Segment } from '../interfaces';
+import { Passage, Photo } from '../interfaces';
 import { distanceBetweenCoords } from './distance';
 import { getClosestPhotoByCoords, getClosestPhotoByKm } from './searching';
 

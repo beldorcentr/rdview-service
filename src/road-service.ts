@@ -8,14 +8,14 @@ export interface RoadServiceConfig {
 
 export class RoadService {
 
-  private apiUrl: string;
+  private roadApiUrl: string;
   private axios: AxiosInstance;
 
   constructor({ apiUrl = 'https://i.centr.by/rdview/api',
       authorization = ''
     }: RoadServiceConfig = { }) {
 
-    this.apiUrl = apiUrl;
+    this.roadApiUrl = `${apiUrl}/v1.1/roads`;
     this.axios = axios.create({
       headers: {
         'Authorization': authorization
@@ -24,7 +24,7 @@ export class RoadService {
   }
 
   public getRoads(search: string): Promise<Road[]> {
-    return this.axios.get(`${this.apiUrl}/v1/roads`, {
+    return this.axios.get(this.roadApiUrl, {
       params: {
         search
       }
