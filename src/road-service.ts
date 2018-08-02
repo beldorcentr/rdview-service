@@ -11,11 +11,11 @@ export class RoadService {
   private roadApiUrl: string;
   private axios: AxiosInstance;
 
-  constructor({ apiUrl = 'https://i.centr.by/rdview/api',
+  constructor({ apiUrl = 'https://i.centr.by/rdview/api/v1.1',
       authorization = ''
     }: RoadServiceConfig = { }) {
 
-    this.roadApiUrl = `${apiUrl}/v1.1/roads`;
+    this.roadApiUrl = `${apiUrl}/roads`;
     this.axios = axios.create({
       headers: {
         'Authorization': authorization

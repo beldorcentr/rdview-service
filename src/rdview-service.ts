@@ -35,7 +35,7 @@ export class RdviewService {
     return this.currentPassage.photos.indexOf(this.currentPhoto);
   }
 
-  constructor({ apiUrl = 'https://i.centr.by/rdview/api',
+  constructor({ apiUrl = 'https://i.centr.by/rdview/api/v1.1',
       authorization = ''
     }: RdviewServiceConfig = { }) {
 

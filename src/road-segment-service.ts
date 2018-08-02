@@ -8,7 +8,7 @@ export class RoadSegmentService {
   private axios: AxiosInstance;
 
   constructor(settings: { apiUrl: string, authorization: string }) {
-    this.segmentUrl = `${settings.apiUrl}/v1.1/segments`;
+    this.segmentUrl = `${settings.apiUrl}/segments`;
     this.axios = axios.create({
       headers: {
         'Authorization': settings.authorization
