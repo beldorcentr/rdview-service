@@ -6,6 +6,8 @@ Service for [rdview](https://i.centr.by/rdview) to receive photos from roads.
 
 Serivice uses rdview api and provides photos from roads of Belarus. Required [authorization](https://i.centr.by/oauth/)
 
+[Usage example](https://github.com/beldorcentr/rdview-front)
+
 ## Installation
 
 ```
@@ -19,7 +21,9 @@ npm install rdview-service
 import { RdviewService } from 'rdview-service';
 
 // ts
-import { RdviewService, Passage, Photo, Road, Segment, CurrentPosition } from 'rdview-service';
+import {
+  RdviewService, Passage, Photo, Road, Segment, CurrentPosition
+} from 'rdview-service';
 
 
 const rdviewService = new RdviewService({
@@ -27,7 +31,7 @@ const rdviewService = new RdviewService({
   authorization: 'Bearer YOUR_OAUTH_TOKEN'
 });
 
-rdviewService.initByCoordinates(50, 30)
+rdviewService.initByCoordinates(52.34, 28.9)
   .then(currentPosition => handleNewPosition(currentPosition));
 
 // moving
@@ -43,7 +47,11 @@ function handleNewPosition(position) {
   // position.currentPhoto.km
   // position.currentPhoto.lat
   // position.currentPhoto.lon
+  // position.currentPhoto.azimuth
+  // position.currentPhoto.date
   // position.currentPhoto.imgUrl
   // position.passages[0].id
 }
 ```
+
+Full documentation in [DOCUMENTATION.md](DOCUMENTATION.md)
