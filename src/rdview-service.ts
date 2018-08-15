@@ -235,6 +235,12 @@ export class RdviewService {
 
   private generateCurrentPosition(isPassageChanged: boolean = false,
       isNoNewPhoto: boolean = false, isEmptyResult: boolean = false): CurrentPosition {
+    if (isEmptyResult) {
+      return {
+        isEmptyResult
+      };
+    }
+
     const closeToCurrentPassages = filterPassagesByDistanceToKm(this.segment.passages,
       this.currentPhoto.km, this.rangeInKmForClosestPassages);
     const closeToCurrentBeginKm = Math.max(this.segment.beginKm,
