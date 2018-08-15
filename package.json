@@ -1,6 +1,6 @@
 {
   "name": "rdview-service",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Rdview service for loading road photos",
   "main": "dist/index.js",
   "typings": "dist/types/index.d.ts",
