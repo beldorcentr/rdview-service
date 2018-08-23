@@ -46,9 +46,10 @@ export class RdviewService {
   }
 
   public initByRoad(roadId: number, km: number): Promise<CurrentPosition> {
-    this.clearSettings();
     return this.passageService.initByRoad(roadId, km)
       .then(segment => {
+        this.clearSettings();
+
         if (!segment) {
           return this.generateCurrentPosition(false, false, true);
         }
@@ -68,9 +69,10 @@ export class RdviewService {
   }
 
   public initByCoordinates(lat: number, lon: number): Promise<CurrentPosition> {
-    this.clearSettings();
     return this.passageService.initByCoordinates(lat, lon)
       .then(segment => {
+        this.clearSettings();
+
         if (!segment) {
           return this.generateCurrentPosition(false, false, true);
         }
