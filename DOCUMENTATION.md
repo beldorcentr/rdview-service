@@ -12,7 +12,7 @@ authorization: 'Bearer YOUR_OAUTH_TOKEN'
 Before usage service must be inited by coordinates or road id and km:
 
 ```
-initByRoad(roadId: number, km: number): Promise<CurrentPosition>
+initByRoad(idRd: number, km: number): Promise<CurrentPosition>
 initByCoordinates(lat: number, lon: number): Promise<CurrentPosition>
 
 // coordinates format - decimal degrees
@@ -27,15 +27,15 @@ Resolved promise after initialization contains CurrentPosition on road.
 When inited, current position can be changed by methods
 
 ```
-getNextPhoto(): Promise<CurrentPosition>
-getPreviousPhoto(): Promise<CurrentPosition>
-setPassage(passageId, km?): Promise<CurrentPosition>
+getNextView(): Promise<CurrentPosition>
+getPreviousView(): Promise<CurrentPosition>
+setPassage(passageId, rdKm?): Promise<CurrentPosition>
 ```
 
 Current position information can be fetched by methods:
 
 ```
-getCurrentPhoto(): Photo
+getCurrentView(): View
 getCurrentPassage(): Passage
 getAllPassages(): Passage[]
 getSegment(): Segment
@@ -71,31 +71,50 @@ interface Road {
 }
 ```
 
-
-#### Photo
+#### View
 
 ```
-export interface Photo {
+export interface View {
   azimuth: number;
   date: Date;
   id: string;
   lat: number;
   lon: number;
-  km: number;
+  rdKm: number;
   imgUrl: string;
+  viewType: ViewType;
+}
+```
+
+#### ViewType
+
+```
+export enum ViewType {
+  TwoDimensional = 'twoDimensional',
+  EquirectangularPanorama = 'equirectangularPanorama'
 }
 ```
 
 #### Passage
 
 ```
-interface Passage {
+export interface Passage {
   id: string;
   date: Date;
-  direction: 'forward' | 'backward';
-  photos: Photo[];
-  beginKm: number;
-  endKm: number;
+  direction: Direction;
+  viewType: ViewType;
+  views: View[];
+  rdKmFrom: number;
+  rdKmTo: number;
+}
+```
+
+#### Direction
+
+```
+export enum Direction {
+  Backward = 'backward',
+  Forward = 'forward'
 }
 ```
 
@@ -104,8 +123,8 @@ interface Passage {
 ```
 interface Segment {
   road: Road;
-  beginKm: number;
-  endKm: number;
+  rdKmFrom: number;
+  rdKmTo: number;
   passages: Passage[];
 }
 ```
@@ -113,16 +132,16 @@ interface Segment {
 #### CurrentPosition
 
 ```
-interface CurrentPosition extends Segment  {
-  currentPassage: Passage;
-  currentPhoto: Photo;
+export interface CurrentPosition extends Segment  {
+  currentPassage?: Passage;
+  currentView?: View;
 
-  closeToCurrentBeginKm: number;
-  closeToCurrentEndKm: number;
-  closeToCurrentPassages: Passage[];
+  closeToCurrentRdKmFrom?: number;
+  closeToCurrentRdKmTo?: number;
+  closeToCurrentPassages?: Passage[];
 
-  isPassageChanged: boolean;
-  isNoNewPhoto: boolean;
+  isPassageChanged?: boolean;
+  isNoNewPhoto?: boolean;
   isEmptyResult: boolean;
 }
 ```

@@ -25,9 +25,9 @@ export class PassageService {
     });
   }
 
-  public initByRoad(roadId: number, km: number): Promise<Segment> {
+  public initByRoad(idRd: number, km: number): Promise<Segment> {
     return this.roadSegmentService
-      .getSegmentByRoad(roadId, Math.max(0, km - this.passageInitKmRange),
+      .getSegmentByRoad(idRd, Math.max(0, km - this.passageInitKmRange),
         km + this.passageInitKmRange)
       .then(segment => this.initFirstSegment(segment));
   }
@@ -46,8 +46,8 @@ export class PassageService {
       return;
     }
     this.loadingNextSegment = this.roadSegmentService
-      .getSegmentByRoad(this.segment.road.id, this.segment.endKm,
-        this.segment.endKm + this.passageInitKmRange)
+      .getSegmentByRoad(this.segment.road.id, this.segment.rdKmTo,
+        this.segment.rdKmTo + this.passageInitKmRange)
       .then(segment => {
         this.loadingNextSegment = null;
         if (this.isSegmentWithPassages(segment)) {
@@ -64,7 +64,7 @@ export class PassageService {
     }
     this.loadingPreviousSegment = this.roadSegmentService
       .getSegmentByRoad(this.segment.road.id,
-        Math.max(0, this.segment.beginKm - this.passageInitKmRange), this.segment.beginKm)
+        Math.max(0, this.segment.rdKmFrom - this.passageInitKmRange), this.segment.rdKmFrom)
       .then(segment => {
         this.loadingPreviousSegment = null;
         if (this.isSegmentWithPassages(segment)) {
@@ -96,10 +96,10 @@ export class PassageService {
       return;
     }
 
-    this.segment.beginKm = Math.min(this.segment.beginKm,
-      segment.beginKm);
-    this.segment.endKm = Math.max(this.segment.endKm,
-      segment.endKm);
+    this.segment.rdKmFrom = Math.min(this.segment.rdKmFrom,
+      segment.rdKmFrom);
+    this.segment.rdKmTo = Math.max(this.segment.rdKmTo,
+      segment.rdKmTo);
 
     segment.passages.forEach(newPassage => {
       const existingNeighbourPassage = this.segment.passages
@@ -118,8 +118,8 @@ export class PassageService {
         });
 
       if (existingNeighbourPassage) {
-        existingNeighbourPassage.photos = sortPhotosByKmAsc(
-          existingNeighbourPassage.photos.concat(newPassage.photos));
+        existingNeighbourPassage.views = sortPhotosByKmAsc(
+          existingNeighbourPassage.views.concat(newPassage.views));
       } else {
         this.segment.passages.push(newPassage);
       }
@@ -130,7 +130,7 @@ export class PassageService {
   }
 
   private isPassagesNeighboursByKm(passage1: Passage, passage2: Passage, maxKmDiff: number): boolean {
-    const getPassagePhotoKmArray = (passage: Passage) => passage.photos.map(photo => photo.km);
+    const getPassagePhotoKmArray = (passage: Passage) => passage.views.map(photo => photo.rdKm);
 
     const passage1PhotoKmArray = getPassagePhotoKmArray(passage1);
     const passage2PhotoKmArray = getPassagePhotoKmArray(passage2);
@@ -140,7 +140,7 @@ export class PassageService {
 
   private isPassagesNeighboursByDate(passage1: Passage, passage2: Passage, maxMsDiff: number): boolean {
     const getPassagePhotoDateInMsArray = (passage: Passage) =>
-      passage.photos.map(photo => photo.date.getTime());
+      passage.views.map(photo => photo.date.getTime());
 
     const passage1PhotoDateInMsArray = getPassagePhotoDateInMsArray(passage1);
     const passage2PhotoDateInMsArray = getPassagePhotoDateInMsArray(passage2);
@@ -167,8 +167,8 @@ export class PassageService {
 
   private getPassagesWithUpdatedKmBorders(passages: Passage[]): Passage[] {
     return passages.map(passage => {
-      passage.beginKm = Math.min.apply(null, passage.photos.map(photo => photo.km));
-      passage.endKm = Math.max.apply(null, passage.photos.map(photo => photo.km));
+      passage.rdKmFrom = Math.min.apply(null, passage.views.map(photo => photo.rdKm));
+      passage.rdKmTo = Math.max.apply(null, passage.views.map(photo => photo.rdKm));
       return passage;
     });
   }

@@ -11,7 +11,7 @@ export class RoadService {
   private roadApiUrl: string;
   private axios: AxiosInstance;
 
-  constructor({ apiUrl = 'https://i.centr.by/rdview/api/v1.1',
+  constructor({ apiUrl = 'https://i.centr.by/rdview/api/v2.0',
       authorization = ''
     }: RoadServiceConfig = { }) {
 

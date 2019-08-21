@@ -1,10 +1,13 @@
-import { Photo } from './photo';
+import { Direction } from './direction';
+import { View } from './view';
+import { ViewType } from './view-type';
 
 export interface Passage {
   id: string;
   date: Date;
-  direction: 'forward' | 'backward';
-  photos: Photo[];
-  beginKm: number;
-  endKm: number;
+  direction: Direction;
+  viewType: ViewType;
+  views: View[];
+  rdKmFrom: number;
+  rdKmTo: number;
 }

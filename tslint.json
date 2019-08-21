@@ -14,9 +14,17 @@
             true,
             "ban-single-arg-parens"
         ],
-        "object-literal-key-quotes": [true, "consistent"],
+        "object-literal-key-quotes": [
+            true,
+            "consistent"
+        ],
         "align": false,
-        "interface-name": [true, "never-prefix"]
+        "interface-name": [
+            true,
+            "never-prefix"
+        ],
+        "object-literal-sort-keys": false,
+        "ordered-imports": false
     },
     "rulesDirectory": []
 }

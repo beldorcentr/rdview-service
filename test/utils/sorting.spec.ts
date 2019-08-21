@@ -1,24 +1,23 @@
-import { Passage, Photo } from '../../src/interfaces';
 import {
   sortPassagesByDateAsc, sortPassagesByDateDesc,
   sortPassagesByDistanceToKm, sortPhotosByKmAsc, sortPhotosByKmDesc
 } from '../../src/utils';
 import { passages } from '../moqs/passages';
-import { photos } from '../moqs/photos';
+import { views } from '../moqs/views';
 
 describe('sortPhotosByKm', () => {
   it('should sort photos by km asc', () => {
-    const sortedByKmPhotos = sortPhotosByKmAsc(photos);
+    const sortedByKmPhotos = sortPhotosByKmAsc(views);
     sortedByKmPhotos.reduce((acc, curr) => {
-      expect(acc.km).toBeLessThanOrEqual(curr.km);
+      expect(acc.rdKm).toBeLessThanOrEqual(curr.rdKm);
       return curr;
     });
   });
 
   it('should sort photos by km desc', () => {
-    const sortedByKmPhotos = sortPhotosByKmDesc(photos);
+    const sortedByKmPhotos = sortPhotosByKmDesc(views);
     sortedByKmPhotos.reduce((acc, curr) => {
-      expect(acc.km).toBeGreaterThanOrEqual(curr.km);
+      expect(acc.rdKm).toBeGreaterThanOrEqual(curr.rdKm);
       return curr;
     });
   });

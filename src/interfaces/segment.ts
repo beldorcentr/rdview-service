@@ -3,7 +3,7 @@ import { Road } from './road';
 
 export interface Segment {
   road?: Road;
-  beginKm?: number;
-  endKm?: number;
+  rdKmFrom?: number;
+  rdKmTo?: number;
   passages?: Passage[];
 }

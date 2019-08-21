@@ -1,13 +1,13 @@
 import { Passage } from './passage';
-import { Photo } from './photo';
 import { Segment } from './segment';
+import { View } from './view';
 
 export interface CurrentPosition extends Segment  {
   currentPassage?: Passage;
-  currentPhoto?: Photo;
+  currentView?: View;
 
-  closeToCurrentBeginKm?: number;
-  closeToCurrentEndKm?: number;
+  closeToCurrentRdKmFrom?: number;
+  closeToCurrentRdKmTo?: number;
   closeToCurrentPassages?: Passage[];
 
   isPassageChanged?: boolean;

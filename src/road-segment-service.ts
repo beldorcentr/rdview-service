@@ -8,7 +8,7 @@ export class RoadSegmentService {
   private axios: AxiosInstance;
 
   constructor(settings: { apiUrl: string, authorization: string }) {
-    this.segmentUrl = `${settings.apiUrl}/segments`;
+    this.segmentUrl = `${settings.apiUrl}/views/segments`;
     this.axios = axios.create({
       headers: {
         'Authorization': settings.authorization
@@ -16,12 +16,12 @@ export class RoadSegmentService {
     });
   }
 
-  public getSegmentByRoad(roadId: number, beginKm: number, endKm: number): Promise<Segment> {
+  public getSegmentByRoad(idRd: number, rdKmFrom: number, rdKmTo: number): Promise<Segment> {
     return this.axios.get(this.segmentUrl, {
       params: {
-        roadId,
-        beginKm,
-        endKm
+        idRd,
+        rdKmFrom,
+        rdKmTo
       }
     }).then(response => this.formatSegment(response.data));
   }
@@ -48,7 +48,7 @@ export class RoadSegmentService {
       passage.id = uuidv4();
       passage.date = new Date(passage.date);
 
-      passage.photos = passage.photos.map(photo => {
+      passage.views = passage.views.map(photo => {
         photo.date = new Date(photo.date);
         return photo;
       });
